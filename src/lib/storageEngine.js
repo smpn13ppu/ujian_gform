@@ -98,42 +98,74 @@ export const storageEngine = {
   // === STUDENTS API ===
   async getStudents() {
     if (isSupabaseConfigured) {
-      const { data, error } = await supabase.from('students').select('*').order('nama', { ascending: true });
-      if (!error && data) return data;
+      try {
+        const { data, error } = await supabase.from('students').select('*').order('nama', { ascending: true });
+        if (!error && data) return data;
+      } catch (err) {
+        console.warn('Supabase getStudents exception:', err);
+      }
     }
-    const local = localStorage.getItem(LOCAL_STORAGE_KEYS.STUDENTS);
-    return local ? JSON.parse(local) : INITIAL_STUDENTS;
+    try {
+      const local = localStorage.getItem(LOCAL_STORAGE_KEYS.STUDENTS);
+      return local ? JSON.parse(local) : INITIAL_STUDENTS;
+    } catch (e) {
+      return INITIAL_STUDENTS;
+    }
   },
 
   async getStudentByNisn(nisn) {
+    const cleanNisn = String(nisn || '').trim();
+    if (isSupabaseConfigured) {
+      try {
+        const { data, error } = await supabase
+          .from('students')
+          .select('*')
+          .eq('nisn', cleanNisn)
+          .maybeSingle();
+        if (!error && data) return data;
+      } catch (e) {
+        console.warn('Supabase getStudentByNisn exception:', e);
+      }
+    }
     const students = await this.getStudents();
-    return students.find((s) => String(s.nisn).trim() === String(nisn).trim()) || null;
+    return students.find((s) => String(s?.nisn || '').trim() === cleanNisn) || null;
   },
 
   async saveStudent(studentData) {
     if (isSupabaseConfigured) {
-      const { error } = await supabase.from('students').upsert(studentData);
-      if (error) console.error('Supabase saveStudent error:', error);
+      try {
+        const { error } = await supabase.from('students').upsert(studentData);
+        if (error) console.error('Supabase saveStudent error:', error);
+      } catch (e) {
+        console.warn('Supabase saveStudent exception:', e);
+      }
     }
     const students = await this.getStudents();
-    const existingIndex = students.findIndex((s) => String(s.nisn) === String(studentData.nisn));
+    const existingIndex = students.findIndex((s) => String(s?.nisn) === String(studentData.nisn));
     if (existingIndex >= 0) {
       students[existingIndex] = { ...students[existingIndex], ...studentData };
     } else {
       students.push({ ...studentData, created_at: new Date().toISOString() });
     }
-    localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENTS, JSON.stringify(students));
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENTS, JSON.stringify(students));
+    } catch (e) {}
     return studentData;
   },
 
   async bulkSaveStudents(newStudentsList) {
     if (isSupabaseConfigured) {
-      const { error } = await supabase.from('students').upsert(newStudentsList);
-      if (error) console.error('Supabase bulkSaveStudents error:', error);
+      try {
+        const { error } = await supabase.from('students').upsert(newStudentsList, { onConflict: 'nisn' });
+        if (error) console.error('Supabase bulkSaveStudents error:', error);
+      } catch (e) {
+        console.warn('Supabase bulkSaveStudents exception:', e);
+      }
     }
-    const existingStudents = await this.getStudents();
-    const studentMap = new Map(existingStudents.map((s) => [String(s.nisn), s]));
-    
+    const students = await this.getStudents();
+    const studentMap = new Map();
+
+    students.forEach((st) => studentMap.set(String(st.nisn), st));
     newStudentsList.forEach((st) => {
       studentMap.set(String(st.nisn), {
         ...st,
@@ -142,35 +174,75 @@ export const storageEngine = {
     });
 
     const updated = Array.from(studentMap.values());
-    localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENTS, JSON.stringify(updated));
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENTS, JSON.stringify(updated));
+    } catch (e) {}
     return updated;
   },
 
   async deleteStudent(nisn) {
     if (isSupabaseConfigured) {
-      await supabase.from('students').delete().eq('nisn', nisn);
+      try {
+        await supabase.from('students').delete().eq('nisn', nisn);
+      } catch (e) {}
     }
     const students = await this.getStudents();
-    const filtered = students.filter((s) => String(s.nisn) !== String(nisn));
-    localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENTS, JSON.stringify(filtered));
+    const filtered = students.filter((s) => String(s?.nisn) !== String(nisn));
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.STUDENTS, JSON.stringify(filtered));
+    } catch (e) {}
     return filtered;
   },
 
   // === EXAMS API ===
   async getExams() {
     if (isSupabaseConfigured) {
-      const { data, error } = await supabase.from('exams').select('*').order('created_at', { ascending: false });
-      if (!error && data) return data;
+      try {
+        const { data, error } = await supabase.from('exams').select('*').order('created_at', { ascending: false });
+        if (!error && data) return data;
+      } catch (err) {
+        console.warn('Supabase getExams exception:', err);
+      }
     }
-    const local = localStorage.getItem(LOCAL_STORAGE_KEYS.EXAMS);
-    return local ? JSON.parse(local) : INITIAL_EXAMS;
+    try {
+      const local = localStorage.getItem(LOCAL_STORAGE_KEYS.EXAMS);
+      return local ? JSON.parse(local) : INITIAL_EXAMS;
+    } catch (e) {
+      return INITIAL_EXAMS;
+    }
   },
 
   async getActiveExamsForClass(kelas) {
-    const exams = await this.getExams();
-    return exams.filter(
-      (e) => e.is_active && Array.isArray(e.target_kelas) && e.target_kelas.includes(kelas)
-    );
+    try {
+      const exams = await this.getExams();
+      if (!exams || !Array.isArray(exams)) return [];
+
+      const cleanTargetClass = String(kelas || '').trim().toUpperCase();
+
+      return exams.filter((e) => {
+        if (!e || !e.is_active) return false;
+
+        let targetClasses = [];
+        if (Array.isArray(e.target_kelas)) {
+          targetClasses = e.target_kelas;
+        } else if (typeof e.target_kelas === 'string') {
+          try {
+            targetClasses = JSON.parse(e.target_kelas);
+          } catch (err) {
+            targetClasses = e.target_kelas.split(',').map((s) => s.trim());
+          }
+        }
+
+        if (!Array.isArray(targetClasses)) return false;
+
+        return targetClasses.some(
+          (c) => String(c || '').trim().toUpperCase() === cleanTargetClass
+        );
+      });
+    } catch (err) {
+      console.warn('getActiveExamsForClass exception:', err);
+      return [];
+    }
   },
 
   async saveExam(examData) {
