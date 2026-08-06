@@ -10,9 +10,20 @@ import { AdminAuthModal } from './components/AdminAuthModal';
 import { storageEngine } from './lib/storageEngine';
 
 export function App() {
-  // Support initial mode from URL search params (e.g. ?mode=supervisor)
+  // Support standalone direct access URLs for Supervisor Token Portal (e.g. ?mode=supervisor, ?token, /token, #token)
   const urlParams = new URLSearchParams(window.location.search);
-  const initialMode = urlParams.get('mode') || 'student';
+  const pathName = window.location.pathname.toLowerCase();
+  const hash = window.location.hash.toLowerCase();
+
+  const isTokenModeDirect =
+    urlParams.get('mode') === 'supervisor' ||
+    urlParams.get('mode') === 'token' ||
+    urlParams.has('token') ||
+    pathName.endsWith('/token') ||
+    pathName.includes('/token') ||
+    hash.includes('token');
+
+  const initialMode = isTokenModeDirect ? 'supervisor' : (urlParams.get('mode') || 'student');
 
   const [appMode, setAppMode] = useState(initialMode); // 'student' | 'supervisor' | 'admin'
   const [studentStep, setStudentStep] = useState('login'); // 'login' | 'dashboard' | 'fullscreen_prompt' | 'exam'
@@ -133,6 +144,7 @@ export function App() {
                 onLoginSuccess={handleLoginSuccess}
                 settings={settings}
                 onOpenAdmin={handleRequestOpenAdmin}
+                onOpenTokenPortal={() => setAppMode('supervisor')}
               />
             )}
 

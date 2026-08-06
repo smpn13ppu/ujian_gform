@@ -10,7 +10,8 @@ import {
   Info,
   CheckCircle2,
   Copy,
-  ArrowLeft
+  ArrowLeft,
+  Key
 } from 'lucide-react';
 
 import { ToastNotification } from '../components/ToastNotification';
@@ -75,9 +76,25 @@ export function SupervisorPortal({ settings, onBackToAdmin }) {
               className="btn-secondary py-1.5 px-3 text-xs bg-white/10 hover:bg-white/20 border-white/20 text-white"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Kembali ke Admin</span>
+              <span>Masuk Admin</span>
             </button>
           )}
+        </div>
+
+        {/* Emergency Network Bypass PIN Card */}
+        <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-xl text-amber-900 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center space-x-3 text-center sm:text-left">
+            <div className="p-2.5 bg-amber-500 text-white rounded-xl shadow-xs shrink-0">
+              <Key className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-bold text-amber-950 text-xs">PIN Izin Minimize Jaringan (Bypass Emergency):</p>
+              <p className="text-[11px] text-amber-800">Berikan PIN ini ke siswa jika Wi-Fi terputus & butuh minimalkan browser.</p>
+            </div>
+          </div>
+          <div className="text-xl font-black font-mono tracking-widest bg-white border-2 border-amber-400 px-4 py-1.5 rounded-xl text-amber-950 shadow-inner shrink-0">
+            {settings?.network_minimize_pin || '1234'}
+          </div>
         </div>
 
         {/* Giant Active Token Display Card */}

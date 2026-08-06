@@ -64,13 +64,35 @@ export const storageEngine = {
   },
 
   async saveSettings(newSettings) {
-    const current = await this.getSettings();
-    const updated = { ...current, ...newSettings };
-    if (isSupabaseConfigured) {
-      const records = Object.entries(updated).map(([key, value]) => ({ key, value: String(value) }));
-      await supabase.from('system_settings').upsert(records);
+    let updated = { ...INITIAL_SETTINGS, ...newSettings };
+    try {
+      const current = await this.getSettings();
+      updated = { ...INITIAL_SETTINGS, ...current, ...newSettings };
+      
+      if (isSupabaseConfigured) {
+        try {
+          const records = Object.entries(updated)
+            .filter(([key]) => key && typeof key === 'string')
+            .map(([key, value]) => ({ 
+              key, 
+              value: value === null || value === undefined ? '' : String(value) 
+            }));
+          const { error } = await supabase.from('system_settings').upsert(records);
+          if (error) console.warn('Supabase saveSettings warning:', error);
+        } catch (subErr) {
+          console.warn('Supabase saveSettings exception:', subErr);
+        }
+      }
+    } catch (err) {
+      console.warn('saveSettings fallback error:', err);
     }
-    localStorage.setItem(LOCAL_STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.SETTINGS, JSON.stringify(updated));
+    } catch (e) {
+      console.warn('LocalStorage saveSettings error:', e);
+    }
+
     return updated;
   },
   // === STUDENTS API ===

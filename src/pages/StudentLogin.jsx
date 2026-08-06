@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRive, useStateMachineInput, Alignment, Fit } from '@rive-app/react-canvas';
 import { storageEngine } from '../lib/storageEngine';
-import { UserCheck, AlertCircle, ArrowRight, Shield, BookOpen, Monitor, Award, Lock, ClipboardList, Clock, BarChart2, X, User } from 'lucide-react';
+import { UserCheck, AlertCircle, ArrowRight, Shield, BookOpen, Monitor, Award, Lock, ClipboardList, Clock, BarChart2, X, User, KeyRound } from 'lucide-react';
 
 import { ToastNotification } from '../components/ToastNotification';
 
@@ -67,7 +67,7 @@ function RiveLoginCharacter({ nisnLength, isFocused, isError, isSuccess }) {
   );
 }
 
-export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin }) {
+export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin, onOpenTokenPortal }) {
   const [nisn, setNisn] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -212,15 +212,28 @@ export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin }) {
 
           {/* Feature chips & Admin Person Icon Button */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* Person Icon Admin Switcher Button before Sesi Aman */}
+            {/* Person Icon Admin Switcher Button */}
             {onOpenAdmin && (
               <button
                 type="button"
                 onClick={onOpenAdmin}
                 className="flex items-center justify-center text-white/80 hover:text-white bg-white/10 hover:bg-[#1A936F] border border-white/20 hover:border-[#1A936F] w-8 h-8 rounded-full transition-all shadow-sm cursor-pointer"
-                title="Masuk Panel Admin CBT"
+                title="Masuk Panel Admin CBT (Password: guru)"
               >
                 <User className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Direct Token Portal Button for Supervisors (No Admin Login Needed) */}
+            {onOpenTokenPortal && (
+              <button
+                type="button"
+                onClick={onOpenTokenPortal}
+                className="flex items-center gap-1.5 text-xs text-white/90 hover:text-white bg-amber-500/20 hover:bg-amber-600/80 border border-amber-400/40 px-3 py-1 rounded-full transition-all shadow-sm cursor-pointer font-semibold"
+                title="Buka Halaman Token Pengawas (Tanpa Login Admin)"
+              >
+                <KeyRound className="w-3.5 h-3.5 text-amber-300" />
+                <span>Token Pengawas</span>
               </button>
             )}
 

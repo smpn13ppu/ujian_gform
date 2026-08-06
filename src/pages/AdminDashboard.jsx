@@ -536,28 +536,18 @@ export function AdminDashboard({ onSwitchToStudent, onSettingsUpdated, onOpenSup
             </div>
           </div>
 
-          {/* Back to Student Portal & Logout Admin Buttons */}
-          <div className="space-y-2">
+          {/* Logout Admin Button Only */}
+          {onLogoutAdmin && (
             <button
-              onClick={onSwitchToStudent}
-              className="w-full btn-secondary bg-white/10 hover:bg-[#1A936F] text-white border-white/20 hover:border-[#1A936F] text-xs py-2.5 justify-center rounded-xl font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
+              type="button"
+              onClick={onLogoutAdmin}
+              className="w-full bg-[#CC0001]/90 hover:bg-[#CC0001] text-white border border-red-500/30 text-xs py-2.5 justify-center rounded-xl font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+              title="Keluar dari Akses Sesi Admin Guru"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Kembali ke Portal Siswa</span>
+              <LogOut className="w-4 h-4" />
+              <span>Keluar Admin</span>
             </button>
-
-            {onLogoutAdmin && (
-              <button
-                type="button"
-                onClick={onLogoutAdmin}
-                className="w-full bg-[#CC0001]/80 hover:bg-[#CC0001] text-white border border-red-500/30 text-xs py-2 justify-center rounded-xl font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
-                title="Keluar dari Akses Sesi Admin Guru"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Keluar Admin</span>
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </aside>
 
