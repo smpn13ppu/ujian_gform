@@ -81,6 +81,28 @@ export function SupervisorPortal({ settings, onBackToAdmin }) {
           )}
         </div>
 
+        {/* Link Token URL Share Banner */}
+        <div className="bg-white border border-[#DDDDDD] p-3.5 rounded-xl shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center space-x-2 text-slate-700 min-w-0 truncate">
+            <Sparkles className="w-4 h-4 text-[#1A936F] shrink-0" />
+            <span className="font-semibold text-slate-500 shrink-0">Alamat Halaman Token:</span>
+            <span className="font-mono font-bold text-[#133E59] truncate bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              {window.location.origin}/token
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/token`);
+              setNotification(`Link ${window.location.origin}/token berhasil disalin!`);
+            }}
+            className="btn-secondary text-[11px] py-1.5 px-3 bg-slate-100 hover:bg-[#1A936F] hover:text-white border-slate-300 rounded-lg shrink-0 flex items-center gap-1.5 font-semibold cursor-pointer"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            <span>Salin Link Halaman Token</span>
+          </button>
+        </div>
+
         {/* Emergency Network Bypass PIN Card */}
         <div className="bg-amber-50 border-2 border-amber-300 p-4 rounded-xl text-amber-900 text-xs flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
           <div className="flex items-center space-x-3 text-center sm:text-left">
