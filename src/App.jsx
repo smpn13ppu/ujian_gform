@@ -10,10 +10,11 @@ import { AdminAuthModal } from './components/AdminAuthModal';
 import { storageEngine } from './lib/storageEngine';
 
 export function App() {
-  // Support standalone direct access URLs for Supervisor Token Portal (e.g. ?mode=supervisor, ?token, /token, #token)
+  // Support standalone direct access URLs for Supervisor Token Portal (e.g. /token, ?token, ?mode=supervisor, #token)
   const urlParams = new URLSearchParams(window.location.search);
   const pathName = window.location.pathname.toLowerCase();
   const hash = window.location.hash.toLowerCase();
+  const pathQuery = (urlParams.get('path') || '').toLowerCase();
 
   const isTokenModeDirect =
     urlParams.get('mode') === 'supervisor' ||
@@ -21,6 +22,7 @@ export function App() {
     urlParams.has('token') ||
     pathName.endsWith('/token') ||
     pathName.includes('/token') ||
+    pathQuery.includes('token') ||
     hash.includes('token');
 
   const initialMode = isTokenModeDirect ? 'supervisor' : (urlParams.get('mode') || 'student');

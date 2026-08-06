@@ -224,19 +224,6 @@ export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin, onOpenToke
               </button>
             )}
 
-            {/* Direct Token Portal Button for Supervisors (No Admin Login Needed) */}
-            {onOpenTokenPortal && (
-              <button
-                type="button"
-                onClick={onOpenTokenPortal}
-                className="flex items-center gap-1.5 text-xs text-white/90 hover:text-white bg-amber-500/20 hover:bg-amber-600/80 border border-amber-400/40 px-3 py-1 rounded-full transition-all shadow-sm cursor-pointer font-semibold"
-                title="Buka Halaman Token Pengawas (Tanpa Login Admin)"
-              >
-                <KeyRound className="w-3.5 h-3.5 text-amber-300" />
-                <span>Token Pengawas</span>
-              </button>
-            )}
-
             {[
               { icon: Lock, label: 'Sesi Aman' },
               { icon: ClipboardList, label: 'Google Form' },
