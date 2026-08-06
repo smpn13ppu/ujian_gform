@@ -8,12 +8,15 @@ import { ToastNotification } from '../components/ToastNotification';
 const STATE_MACHINE_NAME = 'Login Machine';
 
 function RiveLoginCharacter({ nisnLength, isFocused, isError, isSuccess }) {
+  const [riveError, setRiveError] = React.useState(false);
+
   const { rive, RiveComponent } = useRive({
     src: '/animated-login-character.riv',
     stateMachines: STATE_MACHINE_NAME,
     autoplay: true,
     alignment: Alignment.Center,
     fit: Fit.Contain,
+    onLoadError: () => setRiveError(true),
   });
 
   const isCheckingInput = useStateMachineInput(rive, STATE_MACHINE_NAME, 'isChecking');
@@ -23,36 +26,31 @@ function RiveLoginCharacter({ nisnLength, isFocused, isError, isSuccess }) {
   const trigFailInput = useStateMachineInput(rive, STATE_MACHINE_NAME, 'trigFail');
 
   useEffect(() => {
-    if (isCheckingInput) {
-      isCheckingInput.value = isFocused;
-    }
+    try { if (isCheckingInput) isCheckingInput.value = isFocused; }
+    catch (e) { setRiveError(true); }
   }, [isFocused, isCheckingInput]);
 
   useEffect(() => {
-    if (numLookInput) {
-      numLookInput.value = Math.min(nisnLength * 9, 100);
-    }
+    try { if (numLookInput) numLookInput.value = Math.min(nisnLength * 9, 100); }
+    catch (e) { setRiveError(true); }
   }, [nisnLength, numLookInput]);
 
   useEffect(() => {
-    if (isHandsUpInput) {
-      isHandsUpInput.value = false;
-    }
+    try { if (isHandsUpInput) isHandsUpInput.value = false; }
+    catch (e) { setRiveError(true); }
   }, [isHandsUpInput]);
 
   useEffect(() => {
-    if (isError && trigFailInput) {
-      trigFailInput.fire();
-    }
+    try { if (isError && trigFailInput) trigFailInput.fire(); }
+    catch (e) { setRiveError(true); }
   }, [isError, trigFailInput]);
 
   useEffect(() => {
-    if (isSuccess && trigSuccessInput) {
-      trigSuccessInput.fire();
-    }
+    try { if (isSuccess && trigSuccessInput) trigSuccessInput.fire(); }
+    catch (e) { setRiveError(true); }
   }, [isSuccess, trigSuccessInput]);
 
-  if (!RiveComponent) {
+  if (riveError || !RiveComponent) {
     return (
       <div className="w-full h-44 sm:h-48 flex items-center justify-center overflow-hidden bg-[#D6E2E9] rounded-t-[20px]">
         <BookOpen className="w-16 h-16 text-[#133E59]" />
