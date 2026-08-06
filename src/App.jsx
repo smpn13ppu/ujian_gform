@@ -95,6 +95,12 @@ export function App() {
     setStudentStep('login');
   };
 
+  const handleLogoutStudent = () => {
+    setActiveStudent(null);
+    setActiveExam(null);
+    setStudentStep('login');
+  };
+
   // Admin Authentication Handlers
   const handleRequestOpenAdmin = () => {
     if (isAdminAuthenticated) {
