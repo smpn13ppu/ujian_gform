@@ -52,6 +52,14 @@ function RiveLoginCharacter({ nisnLength, isFocused, isError, isSuccess }) {
     }
   }, [isSuccess, trigSuccessInput]);
 
+  if (!RiveComponent) {
+    return (
+      <div className="w-full h-44 sm:h-48 flex items-center justify-center overflow-hidden bg-[#D6E2E9] rounded-t-[20px]">
+        <BookOpen className="w-16 h-16 text-[#133E59]" />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-44 sm:h-48 flex items-center justify-center overflow-hidden bg-[#D6E2E9] rounded-t-[20px]">
       <RiveComponent className="w-full h-full object-contain bg-[#D6E2E9]" />
