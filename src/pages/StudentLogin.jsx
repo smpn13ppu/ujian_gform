@@ -131,7 +131,9 @@ export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin, onOpenToke
       const student = await storageEngine.getStudentByNisn(cleanNisn);
       if (student) {
         setIsSuccessState(true);
-        onLoginSuccess(student);
+        setTimeout(() => {
+          onLoginSuccess(student);
+        }, 1000);
       } else {
         setErrorMsg(`NISN (${cleanNisn}) tidak terdaftar dalam database sistem ujian. Silakan hubungi pengawas.`);
       }
