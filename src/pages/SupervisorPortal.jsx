@@ -87,14 +87,15 @@ export function SupervisorPortal({ settings, onBackToAdmin }) {
             <Sparkles className="w-4 h-4 text-[#1A936F] shrink-0" />
             <span className="font-semibold text-slate-500 shrink-0">Alamat Halaman Token:</span>
             <span className="font-mono font-bold text-[#133E59] truncate bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              {window.location.origin}/token
+              {window.location.origin}/?token
             </span>
           </div>
           <button
             type="button"
             onClick={() => {
-              navigator.clipboard.writeText(`${window.location.origin}/token`);
-              setNotification(`Link ${window.location.origin}/token berhasil disalin!`);
+              const url = `${window.location.origin}/?token`;
+              navigator.clipboard.writeText(url);
+              setNotification(`Link ${url} berhasil disalin!`);
             }}
             className="btn-secondary text-[11px] py-1.5 px-3 bg-slate-100 hover:bg-[#1A936F] hover:text-white border-slate-300 rounded-lg shrink-0 flex items-center gap-1.5 font-semibold cursor-pointer"
           >

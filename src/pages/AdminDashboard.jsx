@@ -605,13 +605,16 @@ export function AdminDashboard({ onSwitchToStudent, onSettingsUpdated, onOpenSup
                   <PieChart className="w-4 h-4 text-[#00ACED]" />
                   Status Sesi Ujian Live
                 </h3>
-                <button
-                  onClick={handleOpenSupervisorPortal}
-                  className="btn-secondary text-xs py-1 px-3 flex items-center gap-1.5 cursor-pointer"
+                <a
+                  href="/?token"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 bg-[#1A936F]/10 hover:bg-[#1A936F] text-[#133E59] hover:text-white border-[#1A936F]/30 rounded-lg font-bold transition-all shadow-xs cursor-pointer"
+                  title="Buka Halaman Token Pengawas di Tab Baru (/?token)"
                 >
                   <ExternalLink className="w-3.5 h-3.5 text-[#1A936F]" />
-                  <span>Standalone Portal Token Pengawas</span>
-                </button>
+                  <span>Buka Portal Token di Tab Baru (/?token)</span>
+                </a>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
