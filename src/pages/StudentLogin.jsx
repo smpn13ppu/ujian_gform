@@ -65,6 +65,29 @@ function RiveLoginCharacter({ nisnLength, isFocused, isError, isSuccess }) {
   );
 }
 
+class RiveSafeWrapper extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err) {
+    console.warn("Rive canvas error caught silently:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full h-44 sm:h-48 flex items-center justify-center overflow-hidden bg-[#D6E2E9] rounded-t-[20px]">
+          <BookOpen className="w-16 h-16 text-[#133E59]" />
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin, onOpenTokenPortal }) {
   const [nisn, setNisn] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -108,9 +131,7 @@ export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin, onOpenToke
       const student = await storageEngine.getStudentByNisn(cleanNisn);
       if (student) {
         setIsSuccessState(true);
-        setTimeout(() => {
-          onLoginSuccess(student);
-        }, 800);
+        onLoginSuccess(student);
       } else {
         setErrorMsg(`NISN (${cleanNisn}) tidak terdaftar dalam database sistem ujian. Silakan hubungi pengawas.`);
       }
@@ -250,12 +271,14 @@ export function StudentLogin({ onLoginSuccess, settings, onOpenAdmin, onOpenToke
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#B8C9D3] z-10" />
 
           {/* Rive Character Header */}
-          <RiveLoginCharacter
-            nisnLength={nisn.length}
-            isFocused={isInputFocused}
-            isError={Boolean(errorMsg)}
-            isSuccess={isSuccessState}
-          />
+          <RiveSafeWrapper>
+            <RiveLoginCharacter
+              nisnLength={nisn.length}
+              isFocused={isInputFocused}
+              isError={Boolean(errorMsg)}
+              isSuccess={isSuccessState}
+            />
+          </RiveSafeWrapper>
 
           {/* Form & Input Section Box (Clean Contrast inside Container) */}
           <div className="p-6 sm:p-7 bg-white/95 backdrop-blur-md rounded-b-[22px] border-t border-[#B8C9D3]/60">
