@@ -6,6 +6,7 @@ import { FullscreenModal } from './components/FullscreenModal';
 import { ExamRoom } from './pages/ExamRoom';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { SupervisorPortal } from './pages/SupervisorPortal';
+import { AdminAuthModal } from './components/AdminAuthModal';
 import { storageEngine } from './lib/storageEngine';
 
 export function App() {
@@ -15,6 +16,10 @@ export function App() {
 
   const [appMode, setAppMode] = useState(initialMode); // 'student' | 'supervisor' | 'admin'
   const [studentStep, setStudentStep] = useState('login'); // 'login' | 'dashboard' | 'fullscreen_prompt' | 'exam'
+
+  // Admin Authentication State
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [showAdminAuthModal, setShowAdminAuthModal] = useState(false);
 
   const [activeStudent, setActiveStudent] = useState(null);
   const [activeExam, setActiveExam] = useState(null);
@@ -77,10 +82,24 @@ export function App() {
     setStudentStep('login');
   };
 
-  const handleLogoutStudent = () => {
-    setActiveStudent(null);
-    setActiveExam(null);
-    setStudentStep('login');
+  // Admin Authentication Handlers
+  const handleRequestOpenAdmin = () => {
+    if (isAdminAuthenticated) {
+      setAppMode('admin');
+    } else {
+      setShowAdminAuthModal(true);
+    }
+  };
+
+  const handleAdminAuthSuccess = () => {
+    setIsAdminAuthenticated(true);
+    setShowAdminAuthModal(false);
+    setAppMode('admin');
+  };
+
+  const handleLogoutAdmin = () => {
+    setIsAdminAuthenticated(false);
+    setAppMode('student');
   };
 
   // If in active exam room, hide normal top navbar for maximum screen space & security
@@ -103,16 +122,17 @@ export function App() {
             onSwitchToStudent={() => setAppMode('student')}
             onSettingsUpdated={(newSett) => setSettings(newSett)}
             onOpenSupervisorPortal={() => setAppMode('supervisor')}
+            onLogoutAdmin={handleLogoutAdmin}
           />
         ) : appMode === 'supervisor' ? (
-          <SupervisorPortal settings={settings} onBackToAdmin={() => setAppMode('admin')} />
+          <SupervisorPortal settings={settings} onBackToAdmin={handleRequestOpenAdmin} />
         ) : (
           <>
             {studentStep === 'login' && (
               <StudentLogin
                 onLoginSuccess={handleLoginSuccess}
                 settings={settings}
-                onOpenAdmin={() => setAppMode('admin')}
+                onOpenAdmin={handleRequestOpenAdmin}
               />
             )}
 
@@ -136,6 +156,13 @@ export function App() {
           </>
         )}
       </main>
+
+      {/* Admin Login Popup Authentication Modal */}
+      <AdminAuthModal
+        isOpen={showAdminAuthModal}
+        onClose={() => setShowAdminAuthModal(false)}
+        onAuthSuccess={handleAdminAuthSuccess}
+      />
     </div>
   );
 }

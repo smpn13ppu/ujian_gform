@@ -75,6 +75,23 @@ CREATE POLICY "Allow public write access to settings" ON public.system_settings 
 
 CREATE POLICY "Allow public read/write to logs" ON public.exam_logs FOR ALL USING (true);
 
+-- 5. TABEL ADMIN_USERS (OTENTIKASI ADMIN GURU)
+CREATE TABLE IF NOT EXISTS public.admin_users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    nama_admin VARCHAR(100) DEFAULT 'Administrator',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Seed default admin user: guru / guru
+INSERT INTO public.admin_users (username, password, nama_admin)
+VALUES ('guru', 'guru', 'Admin Guru CBT')
+ON CONFLICT (username) DO NOTHING;
+
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read/write to admin_users" ON public.admin_users FOR ALL USING (true);
+
 -- Seed Sample Data for initial testing
 INSERT INTO public.students (nisn, nama, kelas, jenis_kelamin, agama) VALUES
 ('1234567890', 'Ahmad Rizky Pratama', 'XII-MIPA 1', 'Laki-laki', 'Islam'),

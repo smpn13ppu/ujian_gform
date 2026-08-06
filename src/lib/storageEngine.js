@@ -249,5 +249,44 @@ export const storageEngine = {
     }
     localStorage.setItem(LOCAL_STORAGE_KEYS.LOGS, JSON.stringify([]));
     return [];
+  },
+
+  // === ADMIN AUTHENTICATION API ===
+  async verifyAdminCredentials(username, password) {
+    const cleanUser = String(username || '').trim();
+    const cleanPass = String(password || '').trim();
+
+    // Default requested credentials: username: guru, password: guru
+    if (cleanUser.toLowerCase() === 'guru' && cleanPass === 'guru') {
+      return {
+        success: true,
+        user: { username: 'guru', name: 'Admin Guru CBT', role: 'ADMIN' },
+      };
+    }
+
+    // Check Supabase admin_users table if configured
+    if (isSupabaseConfigured) {
+      try {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('username', cleanUser)
+          .single();
+
+        if (!error && data && data.password === cleanPass) {
+          return {
+            success: true,
+            user: { username: data.username, name: data.nama_admin || data.username, role: 'ADMIN' },
+          };
+        }
+      } catch (err) {
+        console.warn('Supabase admin_users check fallback:', err);
+      }
+    }
+
+    return {
+      success: false,
+      message: 'Username atau Password Admin salah! (Default: guru / guru)',
+    };
   }
 };
