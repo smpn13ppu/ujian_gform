@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #F3F3F3;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #133E59;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #133E59;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  h4 {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+}
+
+@layer components {
+  /* Custom Inputs per Design System: 0px radius, 1px #DDDDDD bottom border emphasized, focus 1px #1A936F */
+  .cbt-input {
+    @apply w-full bg-white text-[#133E59] text-[15px] font-normal py-[12px] px-[14px] border-b-2 border-[#DDDDDD] border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none focus:border-[#1A936F] focus:ring-0 placeholder-[#999999] transition-colors duration-200;
+  }
+
+  .cbt-select {
+    @apply w-full bg-white text-[#133E59] text-[15px] font-normal py-[12px] px-[14px] border border-[#DDDDDD] rounded-[5px] focus:outline-none focus:border-[#1A936F] transition-colors duration-200;
+  }
+
+  /* Primary Button (Solid Green) */
+  .btn-primary {
+    @apply bg-[#1A936F] hover:bg-[#147C5D] active:bg-[#0F6B4F] text-white font-semibold text-[16px] py-[10px] px-[18px] rounded-[5px] shadow-btn hover:shadow-btn-hover transition-all duration-200 disabled:bg-[#DDDDDD] disabled:text-[#999999] disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed;
+    min-height: 44px;
+  }
+
+  /* Secondary Button (Outline Teal) */
+  .btn-secondary {
+    @apply bg-white hover:bg-[#F3F3F3] active:bg-[#E8F5F2] text-[#1A936F] hover:text-[#147C5D] border-2 border-[#1A936F] hover:border-[#147C5D] font-semibold text-[16px] py-[8px] px-[20px] rounded-[100px] shadow-btn transition-all duration-200 disabled:border-[#DDDDDD] disabled:text-[#999999] disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed;
+    min-height: 44px;
+  }
+
+  /* Danger Button */
+  .btn-danger {
+    @apply bg-[#E95950] hover:bg-[#CC0001] active:bg-[#a00000] text-white font-semibold text-[16px] py-[10px] px-[18px] rounded-[5px] shadow-btn transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer;
+    min-height: 44px;
+  }
+
+  /* Bordered Card */
+  .card-bordered {
+    @apply bg-white border-2 border-[#1A936F] rounded-[10px] p-[20px] transition-all duration-200 hover:shadow-card-hover;
+  }
+
+  /* White Content Container */
+  .card-container {
+    @apply bg-white border border-[#DDDDDD] rounded-[10px] p-[20px] md:p-[24px] shadow-sm;
+  }
+}
+
+/* Modal Overlay Layering */
+.modal-overlay {
+  z-index: 9999;
+}
+.modal-proctor {
+  z-index: 10000;
+}
+
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(120%, 0, 0) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
